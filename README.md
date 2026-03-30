@@ -1,43 +1,106 @@
-# PawPal+ (Module 2 Project)
+# PawPal+
 
-You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pet.
+A daily pet care planning app built with Python and Streamlit. PawPal+ helps busy pet owners stay consistent with pet care by generating a prioritized, time-aware schedule for the day — and explaining every decision it makes.
 
-## Scenario
+---
 
-A busy pet owner needs help staying consistent with pet care. They want an assistant that can:
+## Features
 
-- Track pet care tasks (walks, feeding, meds, enrichment, grooming, etc.)
-- Consider constraints (time available, priority, owner preferences)
-- Produce a daily plan and explain why it chose that plan
+- **Owner & pet setup** — enter your name, pet name, species, and daily time budget
+- **Task management** — add, remove, and track care tasks with title, duration, priority, category, start time, and recurrence
+- **Smart scheduling** — tasks are sorted by desired start time and priority; required tasks are always placed first; overlapping tasks are shifted forward automatically
+- **Daily state tracking** — mark tasks as done or skip recurring tasks for today; reset everything for the next day
+- **Transparent reasoning** — every scheduled task includes an explanation of why it was chosen and when
 
-Your job is to design the system first (UML), then implement the logic in Python, then connect it to the Streamlit UI.
+---
 
-## What you will build
+## Project Structure
 
-Your final app should:
+```text
+pawpal_system.py   # Core logic: Task, Pet, Owner, Scheduler, Plan
+app.py             # Streamlit UI
+tests/
+  test_pawpal.py   # 23 pytest tests covering scheduling, state, and filtering
+requirements.txt
+reflection.md
+```
 
-- Let a user enter basic owner + pet info
-- Let a user add/edit tasks (duration + priority at minimum)
-- Generate a daily schedule/plan based on constraints and priorities
-- Display the plan clearly (and ideally explain the reasoning)
-- Include tests for the most important scheduling behaviors
+---
 
-## Getting started
-
-### Setup
+## Setup
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+
+# Mac/Linux
+source .venv/bin/activate
+
+# Windows
+.venv\Scripts\activate
+
 pip install -r requirements.txt
 ```
 
-### Suggested workflow
+---
 
-1. Read the scenario carefully and identify requirements and edge cases.
-2. Draft a UML diagram (classes, attributes, methods, relationships).
-3. Convert UML into Python class stubs (no logic yet).
-4. Implement scheduling logic in small increments.
-5. Add tests to verify key behaviors.
-6. Connect your logic to the Streamlit UI in `app.py`.
-7. Refine UML so it matches what you actually built.
+## Running the App
+
+```bash
+streamlit run app.py
+```
+
+---
+
+## Running Tests
+
+```bash
+pytest tests/
+```
+
+---
+
+## How It Works
+
+### Scheduling Algorithm
+
+1. Tasks marked `completed` or `skipped_today` are excluded before scheduling begins.
+2. Remaining tasks are sorted by:
+   - Desired start time (earliest first)
+   - Required status (required tasks win ties)
+   - Priority (`high > medium > low`)
+   - Duration (shorter tasks break further ties)
+3. Tasks are greedily accepted if they fit within the owner's `available_minutes` budget.
+4. If a task's desired start time overlaps with the end of the previous task, its actual start is shifted forward.
+5. Each accepted task gets a plain-English explanation of why it was scheduled.
+
+### Class Overview
+
+| Class | Responsibility |
+| --- | --- |
+| `Task` | Holds task data and daily state (`completed`, `skipped_today`) |
+| `Pet` | Stores pet name and species |
+| `Owner` | Manages the task list and time budget; provides `mark_complete`, `skip_today`, `reset_day`, `filter_tasks` |
+| `Scheduler` | Sorts and schedules tasks into a `Plan` |
+| `ScheduledTask` | A task with an assigned actual start time and reason |
+| `Plan` | Output: scheduled tasks, skipped tasks, total time used |
+
+---
+
+## Screenshots
+
+<!-- Add screenshots here. Suggested shots:
+     1. Owner & pet setup + task list with a few tasks added
+     2. Generated schedule showing scheduled tasks with reasons and skipped tasks
+-->
+
+| Task List | Generated Schedule |
+| --- | --- |
+| ![Task list](docs/screenshots/task_list.png) | ![Schedule](docs/screenshots/schedule.png) |
+
+---
+
+## Tech Stack
+
+- [Python 3.12](https://www.python.org/)
+- [Streamlit](https://streamlit.io/)
+- [pytest](https://pytest.org/)
