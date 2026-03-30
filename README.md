@@ -95,7 +95,7 @@ pytest tests/
 
 | Task List | Generated Schedule |
 | --- | --- |
-| ![Task list](docs/screenshots/task_list.png) | ![Schedule](docs/screenshots/schedule.png) |
+| ![Task list](demo_pic_1.png) | ![Schedule](demo_pic_2.png) |
 
 ---
 
